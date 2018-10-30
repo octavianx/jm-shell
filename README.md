@@ -1,4 +1,6 @@
-# jm-shell #
+# jm-shell  for mac #
+
+It is forked from https://github.com/jmcclare/jm-shell,  adapted to macOS 
 
 A highly informative, customized Bash shell.
 
