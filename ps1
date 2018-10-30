@@ -468,7 +468,10 @@ prompt_append_shell_log() {
     #
 
     # Remove the leading command number before logging.
-    current_command_entry="$(echo "${current_command_entry}" | sed -r -e 's/^ *[0-9]+ +//')"
+#    current_command_entry="$(echo "${current_command_entry}" | sed -r -e 's/^ *[0-9]+ +//')"
+#    upper commented by reinhad, for macOS do not Support sed -r   change into
+#    -E
+    current_command_entry="$(echo "${current_command_entry}" | sed -E -e 's/^ *[0-9]+ +//')"
 
 	(prompt_log_shell_command "${current_command_entry}" > /dev/null &)
 }
@@ -708,7 +711,9 @@ prompt_extensive_style() {
     # Show the system load average from the past five minutes if it's >= the
     # threshold (above). Highlight the number if it's >= the second threshold.
 
-    local load_stat=$(cut -d' ' -f1 /proc/loadavg)
+#    local load_stat=$(cut -d' ' -f1 /proc/loadavg)
+#    adapted by reinhard, for changing loadavg to  Mac OS compatiable
+    local load_stat=$(uptime | cut -d":" -f5 |  cut -d"," -f1)
     local int_load_stat=$(echo $load_stat | cut -d. -f1)
 
     if ((${int_load_stat} > ${load_threshold_1})); then
@@ -894,7 +899,9 @@ prompt_extensive_style() {
     # The -U option tells it to list files in their default directory order. No
     # sorting. This gives much better performance when we're only looking for a
     # count anyway.
-    local fcount=$(/bin/ls -1AU 2>/dev/null | /usr/bin/wc -l | /bin/sed 's: ::g')
+#    local fcount=$(/bin/ls -1AU 2>/dev/null | /usr/bin/wc -l | /bin/sed 's: ::g')
+#  upper line commented by reinhard, for macOS have sed in /usr/bin
+    local fcount=$(/bin/ls -1AU 2>/dev/null | /usr/bin/wc -l | /usr/bin/sed 's: ::g')
 
     # This isn't necessary with the -A option above.
     #let fcount=${fcount}-2
@@ -1117,14 +1124,19 @@ prompt_handle_debug() {
                 # in bold yellow
 
                 # move up one line
-                echo -ne '\033[1A'
+            #    echo -ne '\033[1A'
+            #    upper line commented by reinhard,  no need for cursor upward
+            #    moving
+            #
                 # move the cursor right two spaces - not needed because we're
                 # re-drawing the prompt now.
                 #echo -ne '\033[2C'
                 # get the command just entered into the history
                 local command=$(echo "$(history | tail -n1)" | sed 's/[ ]*[0-9]*  //')
                 # change the color to bold yellow
-                echo -ne '\e[1;33m'
+                #echo -ne '\033[1;33m'
+                # upper line commented by reinhard, for macOS compatiable
+                echo -ne '\033[1;33m'
                 # Get the prompt symbol for this user (# for root, $ otherwise)
                 if [ "${UID}" = "0" ]; then
                     local prompt_symbol="#"
@@ -1135,10 +1147,10 @@ prompt_handle_debug() {
                 echo -n "${prompt_symbol} ${command}"
 
                 # reset the color for command output
-                echo -ne "\e[0m"
+                echo -ne "\033[0m"
 
                 # move the cursor down 1 line
-                echo -ne '\033[1B'
+                echo -ne '\033[1B\n'
                 local shift_length=0
                 # Get the length of the prompt + command
                 let shift_length=2+${#command}
