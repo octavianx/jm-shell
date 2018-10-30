@@ -15,7 +15,7 @@ shows some relevent info about the last command and the current environment.
 * time last command finished on the right
 * shows error code of last command, if any
 * shows total time of last command if over 4 seconds
-* indicates if inside Vim, Midnight Commander, or [Desk](https://github.com/jamesob/desk)
+* indicates if inside Vim, Midnight Commander, Python virtualenv (S), or [Desk](https://github.com/jamesob/desk)
 * shows current system load average if over 1, in red if over 2
 * shows battery charge status if laptop battery is less than full
 
@@ -60,11 +60,21 @@ does this no matter how those are set.
 
 ### Other Included Prompt Styles ###
 
-#### standard ####
+#### standard and standard-mono ####
 
-Also named `default`. This is the default Bash color prompt style. Setting this
-style also skips the background jobs. It’s a bit better for performance on an
-overloaded system.
+This is the default Bash prompt style configured in most default `~/.bashrc`
+files.
+
+Set `PROMPT_STYLE` to `standard` or `default` for the standard Bash color
+prompt. Set it to `standard-mono` or `default-mono` for the non‐color version.
+
+#### fast and fast-mono ####
+
+This  the default Bash color prompt style. Setting this style also skips the
+background jobs. It’s a bit better for performance on an overloaded system.
+
+Set `PROMPT_STYLE` to `fast` for the standard Bash color prompt. Set it to
+`fast-mono` for the non‐color version.
 
 #### tweaked ####
 
@@ -74,7 +84,10 @@ also runs the background jobs.
 #### extensive ####
 
 The style described at the top. This is the default style if you don’t set
-`prompt_style`.
+`PROMPT_STYLE`.
+
+Set `PROMPT_STYLE` to `extensive-dark` for a dark version that is more legible
+on white terminal backgrounds.
 
 #### minimal ####
 
@@ -103,12 +116,33 @@ Bash prompt variables. A bit better for performance than the extensive style.
 
 ## Installation ##
 
-Copy or symlink `ps1`, `colors.sh`, and `color_unset.sh` to `~/.local/lib/bash`
+Clone this repository into `~/.local/lib/jm-shell` with:
+
+```bash
+git clone git@github.com:jmcclare/jm-shell.git ~/.local/lib/jm-shell
+```
 
 Add the following to your `~/.bashrc`
 
 ```bash
+# Source jm-shell custom prompt if it exists.
+if [ -f "$HOME/.local/lib/jm-shell/ps1" ]
+then
+    source "$HOME/.local/lib/jm-shell/ps1"
+fi
+```
+
+You can also clone this repo anywhere you want, then copy or symlink `ps1`,
+`colors.sh`, and `color_unset.sh` into a directory like `~/.local/lib/bash`
+
+Then add the following to your `~/.bashrc`
+
+```bash
 source ~/local/lib/bash/ps1
+if [ -f "$HOME/local/lib/bash/ps1" ]
+then
+    source "$HOME/local/lib/bash/ps1"
+fi
 ```
 
 If you are using anything that adds something to your Bash `$PROMPT_COMMAND`
@@ -120,10 +154,10 @@ The prompt command this PS1 adds must be the first part of your
 ## Configuration ##
 
 You can set one of the other styles any time, or in your `~/.bashrc` by setting
-`prompt_style`, like this:
+`PROMPT_STYLE`, like this:
 
 ```bash
-prompt_style=kirby
+PROMPT_STYLE=kirby
 ```
 
 The default prompt style is `extensive`.
